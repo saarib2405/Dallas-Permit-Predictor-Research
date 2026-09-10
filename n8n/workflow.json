@@ -1,0 +1,196 @@
+{
+  "name": "Dallas Permit Value Predictor Agent (Telegram)",
+  "nodes": [
+    {
+      "parameters": {
+        "model": "=qwen2.5:3b",
+        "options": {
+          "temperature": 0.2
+        }
+      },
+      "id": "55e22d42-7630-4d96-a0d1-ab1a68d8cbf1",
+      "name": "Ollama Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
+      "typeVersion": 1,
+      "position": [
+        400,
+        288
+      ],
+      "credentials": {
+        "ollamaApi": {
+          "id": "oqbj6L9oa6yuIMi1",
+          "name": "Ollama account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "id": "5292d396-71df-4b77-bee6-c15a35da9ef0",
+      "name": "Telegram Trigger1",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1,
+      "position": [
+        240,
+        0
+      ],
+      "webhookId": "df7d14f5-2b01-4d79-a109-45f5b6bf250f",
+      "credentials": {
+        "telegramApi": {
+          "id": "yEfuk8voz0Yjtcfb",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Telegram Trigger1').item.json.message.text }}",
+        "options": {
+          "systemMessage": "You are a Dallas building permit value estimator assistant. When the user asks about permit costs, use the 'Predict Permit Value' tool to call the prediction API.\n\nExtract these fields from the user's message and pass them as JSON:\n- square_footage (number, e.g. 2500)\n- zip_code (string, e.g. \"75201\")\n- permit_type (string: use one of \"Building\", \"Electrical\", \"Plumbing\", \"Mechanical\", \"Demolition\" — default to \"Building\" if not specified)\n- work_type (string: use one of \"New Construction\", \"Renovation\", \"Repair\", \"Addition\", \"Other\" — default to \"Other\" if not specified)\n- occupancy_type (string: use one of \"Single Family\", \"Multi Family\", \"Commercial\", \"Industrial\", \"N/A\" — default to \"N/A\" if not specified)\n\nAlways call the tool with all five fields. After getting the result, explain the predicted value clearly, mention the 95% confidence interval, and note any assumptions you made."
+        }
+      },
+      "id": "775dd7c0-4e68-4132-8920-886c9fb39855",
+      "name": "AI Agent1",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        560,
+        16
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://dallas-permit-predictor.onrender.com/predict",
+        "sendBody": true,
+        "contentType": "json",
+        "jsonBody": "={\"square_footage\": {square_footage}, \"zip_code\": \"{zip_code}\", \"permit_type\": \"{permit_type}\", \"work_type\": \"{work_type}\", \"occupancy_type\": \"{occupancy_type}\"}",
+        "parametersBody": {
+          "values": []
+        },
+        "options": {}
+      },
+      "id": "a81b8da6-3392-495a-8a01-8931b1e43dad",
+      "name": "Predict Permit Value1",
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        880,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Telegram Trigger1').item.json.message.chat.id }}"
+      },
+      "id": "0b9139ab-cf56-403d-920c-fb6ec3f00eeb",
+      "name": "Window Buffer Memory1",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        608,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger1').item.json.message.chat.id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "id": "407ad069-b0ef-4de4-9bc8-2eb053b44686",
+      "name": "Telegram Reply1",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        1088,
+        16
+      ],
+      "webhookId": "cabf9af6-100b-4ede-89c0-b43a3fc9adc1",
+      "credentials": {
+        "telegramApi": {
+          "id": "yEfuk8voz0Yjtcfb",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Ollama Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Trigger1": {
+      "main": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent1": {
+      "main": [
+        [
+          {
+            "node": "Telegram Reply1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Predict Permit Value1": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory1": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "6dfdf238-9c09-4878-a4a5-dd624ec87459",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "07598306105a1be2e905d866503d089de34a1f32ce14b68a70f5c41c75e48eeb"
+  },
+  "id": "cB3UxrSlQvSrG2h3",
+  "tags": []
+}

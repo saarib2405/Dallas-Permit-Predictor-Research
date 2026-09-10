@@ -1,0 +1,221 @@
+{
+  "name": "Dallas Permit Value Predictor Agent (Telegram)",
+  "nodes": [
+    {
+      "parameters": {
+        "model": "mistralai/devstral-2-123b-instruct-2512",
+        "options": {
+          "temperature": 0.2,
+          "maxTokens": 1024
+        }
+      },
+      "id": "a556cb32-5f1d-4a3f-8457-9b85a507cb67",
+      "name": "Nvidia NIM Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        880,
+        352
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "nvidia_nim_creds",
+          "name": "Nvidia NIM"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "id": "e02e8321-5074-4627-840f-fc4f6ec6aa87",
+      "name": "Telegram Trigger1",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1,
+      "position": [
+        720,
+        64
+      ],
+      "webhookId": "df7d14f5-2b01-4d79-a109-45f5b6bf250f",
+      "credentials": {
+        "telegramApi": {
+          "id": "yEfuk8voz0Yjtcfb",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Telegram Trigger1').item.json.message.text }}",
+        "options": {
+          "systemMessage": "You are a Dallas building permit value estimator assistant. When the user asks about permit costs, use the 'Predict Permit Value' tool to call the prediction API.\n\nExtract these fields from the user's message and pass them as JSON:\n- square_footage (number, e.g. 2500)\n- zip_code (string, e.g. \"75201\")\n- permit_type (string: use one of \"Building\", \"Electrical\", \"Plumbing\", \"Mechanical\", \"Demolition\" — default to \"Building\" if not specified)\n- work_type (string: use one of \"New Construction\", \"Renovation\", \"Repair\", \"Addition\", \"Other\" — default to \"Other\" if not specified)\n- occupancy_type (string: use one of \"Single Family\", \"Multi Family\", \"Commercial\", \"Industrial\", \"N/A\" — default to \"N/A\" if not specified)\n\nAlways call the tool with all five fields. After getting the result, explain the predicted value clearly, mention the 95% confidence interval, and note any assumptions you made."
+        }
+      },
+      "id": "2587b03a-8cf7-4085-a118-02296716fe26",
+      "name": "AI Agent1",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        1040,
+        80
+      ]
+    },
+    {
+      "parameters": {
+        "toolDescription": "Predict the Dallas building permit value. Requires square_footage (number), zip_code (string), permit_type (Building/Electrical/Plumbing/Mechanical/Demolition), work_type (New Construction/Renovation/Repair/Addition/Other), occupancy_type (Single Family/Multi Family/Commercial/Industrial/N/A).",
+        "method": "POST",
+        "url": "https://dallas-permit-predictor.onrender.com/predict",
+        "sendBody": true,
+        "parametersBody": {
+          "values": [
+            {
+              "name": "square_footage",
+              "valueProvider": "fieldValue",
+              "value": "2500"
+            },
+            {
+              "name": "zip_code",
+              "valueProvider": "fieldValue",
+              "value": "75201"
+            },
+            {
+              "name": "permit_type",
+              "valueProvider": "fieldValue",
+              "value": "Building"
+            },
+            {
+              "name": "work_type",
+              "valueProvider": "fieldValue",
+              "value": "Other"
+            },
+            {
+              "name": "occupancy_type",
+              "valueProvider": "fieldValue",
+              "value": "N/A"
+            }
+          ]
+        }
+      },
+      "id": "c0a7b486-e565-4f0e-9e28-e601761922cd",
+      "name": "Predict Permit Value1",
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        1360,
+        368
+      ]
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Telegram Trigger1').item.json.message.chat.id }}"
+      },
+      "id": "a88cbc57-f748-47b7-8e46-5f9b83541216",
+      "name": "Window Buffer Memory1",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        1088,
+        368
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger1').item.json.message.chat.id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "id": "984ca6c9-ae62-4d88-b103-1db6c259b870",
+      "name": "Telegram Reply1",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        1568,
+        80
+      ],
+      "webhookId": "cabf9af6-100b-4ede-89c0-b43a3fc9adc1",
+      "credentials": {
+        "telegramApi": {
+          "id": "yEfuk8voz0Yjtcfb",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Nvidia NIM Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Trigger1": {
+      "main": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent1": {
+      "main": [
+        [
+          {
+            "node": "Telegram Reply1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Predict Permit Value1": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory1": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "afc1b1f6-e9a9-4f71-8cfb-7244dde17b47",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "07598306105a1be2e905d866503d089de34a1f32ce14b68a70f5c41c75e48eeb"
+  },
+  "id": "cB3UxrSlQvSrG2h3",
+  "tags": []
+}
