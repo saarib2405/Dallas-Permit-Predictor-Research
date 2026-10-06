@@ -93,6 +93,18 @@ python src/baseline_comparisons.py
 
 ---
 
+### Step 2.6: Stage 1 Recording Pattern Shift & Counterfactual Evaluation
+Evaluates Stage 1 under the zero-value recording shift across pre-shift vs. post-shift splits, and executes the counterfactual training horizon experiment on the 2020 holdout:
+
+```bash
+python src/eval_stage1_shift.py
+```
+
+- **Input**: `outputs/permits_research_cleaned.csv`
+- **Output**: `outputs/stage1_shift_eval_results.json`
+
+---
+
 ## 3. Results Verification & Traceability
 
 Every table in `docs/research_paper_draft.md` traces directly to the generated output files:
@@ -101,7 +113,8 @@ Every table in `docs/research_paper_draft.md` traces directly to the generated o
 | :--- | :--- | :--- |
 | **Table 1** (Methodological Audit) | `docs/feature_audit.md` | Architectural review |
 | **Tables 2, 3, 4** (Validation & Holdout) | `outputs/pipeline_results.json` | `src/modeling_pipeline.py` |
-| **Table 5** (Zero-Rate Regime Shift) | `docs/fold2_and_parser_findings.md` | `src/diagnostics_fold2_and_parser.py` |
+| **Table 5** (Zero-Rate Recording Patterns) | `docs/fold2_and_parser_findings.md` | `src/diagnostics_fold2_and_parser.py` |
+| **Tables 5B, 5C** (Stage 1 Shift & Counterfactual) | `outputs/stage1_shift_eval_results.json` | `src/eval_stage1_shift.py` |
 | **Table 6** (Variance / Denominator) | `docs/fold2_and_parser_findings.md` | `src/diagnostics_fold2_and_parser.py` |
 | **Table 7** (Fallback Strings Audit) | `docs/fold2_and_parser_findings.md` | `src/diagnostics_fold2_and_parser.py` |
 | **Table 8** (Parser Effect Across Folds) | `outputs/pipeline_results.json` | `src/modeling_pipeline.py` |

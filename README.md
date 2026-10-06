@@ -16,12 +16,14 @@ Dallas-Permit-Value-Research/
 │   ├── modeling_pipeline.py           # Primary two-stage hurdle pipeline (leakage-free, 4 folds + holdout)
 │   ├── ablation_stage1_parser_effect.py # Stage 1 ablation isolating synthetic feature removal
 │   ├── diagnostics_fold2_and_parser.py  # Forensic diagnostics on Fold 2 regime shift & parser fallbacks
-│   └── baseline_comparisons.py        # Benchmark models (Naive Median, RidgeCV, Tweedie XGBoost)
+│   ├── baseline_comparisons.py        # Benchmark models (Naive Median, RidgeCV, Tweedie XGBoost)
+│   └── eval_stage1_shift.py           # Stage 1 recording pattern shift & holdout counterfactual
 ├── outputs/
 │   ├── permits_research_cleaned.csv   # Cleaned research dataset (126,837 rows)
 │   ├── pipeline_results.json          # Primary cross-validation and 2020 holdout metrics
 │   ├── ablation_results.json          # Stage 1 ablation metrics
 │   ├── baseline_comparison_results.json # Comparative baseline model metrics
+│   ├── stage1_shift_eval_results.json # Stage 1 shift & counterfactual evaluation metrics
 │   ├── feature_importance_stage1.csv  # Stage 1 classifier feature importance
 │   ├── feature_importance_stage2.csv  # Stage 2 regressor feature importance
 │   └── consolidated_summary_table.md  # Consolidated table of all empirical metrics

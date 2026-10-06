@@ -1,0 +1,74 @@
+{
+  "metrics_preshift_on_2020": {
+    "training_window": "2018-01-02 to 2019-03-31 (Pre-Shift Only)",
+    "training_effective_n": 51695,
+    "accuracy": 0.7667989947918563,
+    "precision": 0.9777587681779298,
+    "recall": 0.35154808283781014,
+    "f1": 0.5171555689616167,
+    "roc_auc": 0.4883067364991014
+  },
+  "metrics_full_on_2020": {
+    "training_window": "2018-01-02 to 2019-12-31 (Full Development, covering shift)",
+    "training_effective_n": 92398,
+    "accuracy": 0.9345157883235605,
+    "precision": 0.9263665594855306,
+    "recall": 0.8860980110723805,
+    "f1": 0.9057849507440788,
+    "roc_auc": 0.9678358331789683
+  },
+  "building_permits_breakdown": {
+    "building_permits_total_2020": 8997,
+    "building_permits_zero_count_2020": 4095,
+    "building_permits_zero_rate_2020": 0.4551517172390797,
+    "preshift_trained_bldg_recall": 0.026373626373626374,
+    "preshift_trained_bldg_precision": 0.84375,
+    "preshift_trained_bldg_f1": 0.05114847264977504,
+    "full_trained_bldg_recall": 0.9401709401709402,
+    "full_trained_bldg_precision": 0.9732052578361982,
+    "full_trained_bldg_f1": 0.9564029313128803
+  },
+  "non_building_breakdown": {
+    "non_building_total_2020": 18460,
+    "non_building_zero_count_2020": 5659,
+    "preshift_trained_recall": 0.5868528008482063,
+    "full_trained_recall": 0.8469694292277787
+  },
+  "cross_fold_groups": {
+    "pre_shift_group": {
+      "folds": [
+        "Fold 1 (2019 Q1)"
+      ],
+      "mean_accuracy": 0.9793,
+      "mean_recall": 0.8722,
+      "mean_precision": 0.9865,
+      "mean_f1": 0.9256,
+      "mean_auc": 0.9766,
+      "val_zero_rate": 0.1478
+    },
+    "transition_period": {
+      "folds": [
+        "Fold 2 (2019 Q2)"
+      ],
+      "accuracy": 0.948,
+      "recall": 0.6969,
+      "precision": 0.9774,
+      "f1": 0.8137,
+      "auc": 0.8535,
+      "val_zero_rate": 0.163
+    },
+    "post_shift_group": {
+      "folds": [
+        "Fold 3 (2019 Q3)",
+        "Fold 4 (2019 Q4)",
+        "2020 Holdout"
+      ],
+      "mean_accuracy": 0.9230052627745202,
+      "mean_recall": 0.8183326703574602,
+      "mean_precision": 0.9449888531618434,
+      "mean_f1": 0.8747283169146929,
+      "mean_auc": 0.9620786110596562,
+      "mean_val_zero_rate": 0.3469333333333333
+    }
+  }
+}

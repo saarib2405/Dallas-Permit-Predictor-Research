@@ -243,6 +243,32 @@ The apparent drop in Fold 2's Dollar $R^2$ ($0.3370$ vs $0.5068$ in Fold 1) is m
 
 > **Key Finding:** In Fold 2, the model achieved a **lower Dollar RMSE ($\$556,364$)** than in Fold 1 ($\$679,805$). However, because Fold 1 contained two multi-million commercial projects ($\$43\text{M}$ and $\$38.5\text{M}$), its variance denominator $\sum (y_i - \bar{y})^2$ was twice as large. In **log space**, which is invariant to single-outlier variance inflation, **Fold 2's $R^2$ ($0.7566$) is higher than Fold 1's ($0.7422$)**.
 
+### 4.3 Stage 1 Evaluation Under Recording Pattern Shift (Pre-Shift vs. Post-Shift Split)
+
+To evaluate how much of the Stage 1 classification accuracy and prospective holdout generalization depends on the training window covering the newly observed recording patterns, we split the empirical performance into two temporal regimes and conducted a counterfactual training horizon experiment (`src/eval_stage1_shift.py`).
+
+#### Table 5B: Stage 1 Performance Grouped by Pre-Shift vs. Post-Shift Regimes
+*Source: `outputs/stage1_shift_eval_results.json` and `outputs/pipeline_results.json`*
+
+| Evaluation Window | Regime Group | Val $N$ | Val Zero Rate | Stage 1 Acc | Stage 1 Recall | Stage 1 Precision | Stage 1 F1 | Stage 1 ROC-AUC |
+|---|---|---|---|---|---|---|---|---|
+| **Fold 1** (2019 Q1) | **Pre-Shift Baseline** | 11,334 | 14.78% | **0.9793** | **0.8722** | **0.9865** | **0.9256** | **0.9766** |
+| **Fold 2** (2019 Q2) | **Shift Transition Onset** | 12,653 | 16.30% | 0.9480 | 0.6969 | 0.9774 | 0.8137 | 0.8535 |
+| **Fold 3** (2019 Q3) | **Post-Shift Early** | 14,890 | 31.24% | 0.8984 | 0.7091 | 0.9535 | 0.8134 | 0.9528 |
+| **Fold 4** (2019 Q4) | **Post-Shift Established** | 13,160 | 35.39% | 0.9361 | 0.8598 | 0.9551 | 0.9050 | 0.9656 |
+| **2020 Holdout** | **Post-Shift Prospective** | 27,457 | 37.45% | 0.9345 | 0.8861 | 0.9264 | 0.9058 | 0.9678 |
+
+#### Table 5C: Counterfactual 2020 Holdout Generalization by Training Window Coverage
+*Source: `outputs/stage1_shift_eval_results.json` (`src/eval_stage1_shift.py`)*
+
+| Model Training Window | Shift Coverage in Train | 2020 Overall Acc | 2020 Overall Recall | 2020 Overall F1 | 2020 Overall AUC | 2020 Building Zero Recall | 2020 Building Zero F1 |
+|---|---|---|---|---|---|---|---|
+| **Pre-Shift Only** (2018 to 2019 Q1) | None (Pre-shift baseline only) | 0.7668 | 0.3515 | 0.5172 | 0.4883 | **0.0264** | **0.0511** |
+| **Full Development** (2018 to 2019 Q4) | Complete (Includes 2019 Q2–Q4) | **0.9345** | **0.8861** | **0.9058** | **0.9678** | **0.9402** | **0.9564** |
+| **Empirical Delta ($\Delta$)** | Coverage Recovery | $+0.1677$ | $+0.5346$ | $+0.3886$ | $+0.4795$ | **+0.9138** | **+0.9053** |
+
+> **Key Takeaway on Holdout Dependency:** The counterfactual experiment demonstrates that the Stage 1 model's high prospective performance on the 2020 holdout (Recall $0.8861$, ROC-AUC $0.9678$) is critically dependent on the training window extending through 2019 Q2–Q4 to capture the newly observed recording patterns. When trained strictly on pre-shift data, the classifier identifies only $2.6\%$ of zero-value building permits in 2020 (overall recall collapses to $0.3515$), because it was never exposed to building permits declaring $\$0$. Once training data encompasses the emergent patterns, building zero recall jumps to $94.02\%$, establishing that prospective generalization reflects empirical adaptation to updated municipal filing patterns rather than static distributional stability.
+
 ---
 
 ## 5. Data-Quality Contribution: Permit Type Parser Forensic Audit
@@ -423,6 +449,7 @@ Every table and figure in this manuscript is programmatically reproducible from 
 | **Table 1: Methodological Corrections** | [`docs/feature_audit.md`](docs/feature_audit.md) | Architectural audit |
 | **Tables 2, 3, 4, 10: Performance & Sensitivity** | [`outputs/pipeline_results.json`](outputs/pipeline_results.json) | [`src/modeling_pipeline.py`](src/modeling_pipeline.py) |
 | **Tables 5, 6, 7: Diagnostics, Regimes, Fallback** | [`docs/fold2_and_parser_findings.md`](docs/fold2_and_parser_findings.md) | [`src/diagnostics_fold2_and_parser.py`](src/diagnostics_fold2_and_parser.py) |
+| **Tables 5B, 5C: Stage 1 Shift & Counterfactual** | [`outputs/stage1_shift_eval_results.json`](outputs/stage1_shift_eval_results.json) | [`src/eval_stage1_shift.py`](src/eval_stage1_shift.py) |
 | **Table 8: Feature Importance Redistribution** | [`outputs/feature_importance_stage1.csv`](outputs/feature_importance_stage1.csv) | [`src/modeling_pipeline.py`](src/modeling_pipeline.py) |
 | **Table 9: Three-Way Ablation Study** | [`outputs/ablation_results.json`](outputs/ablation_results.json) | [`src/ablation_stage1_parser_effect.py`](src/ablation_stage1_parser_effect.py) |
 | **Section 6.1: Sign/Demo Confusion Analysis** | `outputs/ablation_results.json` | [`src/ablation_stage1_parser_effect.py`](src/ablation_stage1_parser_effect.py) |
