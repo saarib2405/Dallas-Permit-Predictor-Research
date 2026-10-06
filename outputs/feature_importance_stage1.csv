@@ -1,0 +1,53 @@
+feature,importance
+permit_category_Electrical Sign,0.14951086
+work_type_Demolition,0.10891692
+permit_category_Demolition,0.0922146
+work_type_Alteration,0.08123757
+permit_category_Barricade,0.0684534
+permit_category_Building,0.06767072
+permit_category_Sign,0.038031306
+permit_category_Fence,0.03072002
+sub_category_Single Family,0.02917787
+permit_category_Liquor License,0.028067194
+permit_category_Lawn Sprinkler,0.024253953
+is_repeat_contractor,0.022804407
+work_type_New Construction,0.022028485
+permit_category_Electrical,0.020267166
+work_type_Renovation,0.019924479
+Area,0.01881848
+permit_category_Supergraphics,0.0187817
+log_area,0.018190164
+permit_code_freq,0.017342584
+land_use_freq,0.016119495
+permit_category_Mechanical,0.015405226
+permit_category_Plumbing,0.015166967
+contractor_permit_count,0.014682941
+sub_category_Commercial,0.011752973
+permit_category_Security System,0.008538545
+days_since_epoch,0.007986251
+sub_category_Multi Family,0.0067902193
+work_type_Addition,0.005614428
+work_type_Finish Out,0.0026814034
+issue_year,0.0025747311
+zip_zero_rate_encoded,0.0025734748
+contractor_city_freq,0.0022416324
+permit_category_Special Purpose Sign,0.0019664487
+permit_category_Backflow,0.0017897116
+permit_category_Swimming Pool,0.0015269679
+"permit_category_Paving (Sidewalk, Drive Approaches)",0.0013575897
+work_type_Reconstruction,0.0013022363
+issue_day_of_week,0.00090978097
+issue_month,0.00080685253
+issue_quarter,0.0007684834
+permit_category_Fire Alarm,0.00075780024
+permit_category_Fire Sprinkler (Major Work),0.00015159645
+permit_category_Fire Sprinkler (Minor Work),0.00012237714
+is_q4,0.0
+permit_category_Elevator,0.0
+permit_category_Mechanical Refrigeration,0.0
+permit_category_Flammable Liquid,0.0
+permit_category_Grading and Paving,0.0
+permit_category_Excavation,0.0
+permit_category_Medical Gas,0.0
+permit_category_Tree Removal,0.0
+permit_category_Tent,0.0

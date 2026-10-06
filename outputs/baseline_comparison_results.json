@@ -1,0 +1,199 @@
+{
+  "description": "Benchmark comparative models (Naive, Log-Linear Ridge, Tweedie XGBoost) evaluated across identical forward-chaining folds and 2020 holdout (burn-in fixed)",
+  "folds": [
+    {
+      "split": "Fold 1",
+      "effective_train_size": 40361,
+      "val_size": 11334,
+      "naive_median": {
+        "mae_dollars": 117234.28559996471,
+        "rmse_dollars": 974446.0873688674,
+        "r2_dollars": -0.013438254876746214
+      },
+      "naive_tworate": {
+        "mae_dollars": 117091.26784631317,
+        "rmse_dollars": 974549.2020099263,
+        "r2_dollars": -0.0136527477097248
+      },
+      "log_linear_ridge": {
+        "best_alpha": 10.0,
+        "r2_log": 0.40525058300937766,
+        "rmse_log": 1.639711998213764,
+        "mae_log": 1.2370629535450217,
+        "duan_factor": 45.90016220295672,
+        "mae_dollars": 951925.0389445858,
+        "rmse_dollars": 2807800.0218590307,
+        "r2_dollars": -7.414222803856376
+      },
+      "tweedie_xgboost": {
+        "mae_dollars": 79128.33139920622,
+        "rmse_dollars": 803435.0431571865,
+        "r2_dollars": 0.31105714235442083
+      }
+    },
+    {
+      "split": "Fold 2",
+      "effective_train_size": 51695,
+      "val_size": 12653,
+      "naive_median": {
+        "mae_dollars": 105374.09489449141,
+        "rmse_dollars": 690669.9204627853,
+        "r2_dollars": -0.021761573546624335
+      },
+      "naive_tworate": {
+        "mae_dollars": 105284.0611688965,
+        "rmse_dollars": 690795.0450092566,
+        "r2_dollars": -0.022131819970809374
+      },
+      "log_linear_ridge": {
+        "best_alpha": 10.0,
+        "r2_log": 0.4751838514983032,
+        "rmse_log": 1.4743750616550548,
+        "mae_log": 1.0857419926533132,
+        "duan_factor": 32.86542183171826,
+        "mae_dollars": 1217357.873000427,
+        "rmse_dollars": 3564775.4962060857,
+        "r2_dollars": -26.219042816376376
+      },
+      "tweedie_xgboost": {
+        "mae_dollars": 68717.72598767685,
+        "rmse_dollars": 563202.7987672937,
+        "r2_dollars": 0.3205803713669877
+      }
+    },
+    {
+      "split": "Fold 3",
+      "effective_train_size": 64348,
+      "val_size": 14890,
+      "naive_median": {
+        "mae_dollars": 55136.684881128276,
+        "rmse_dollars": 427880.6230981621,
+        "r2_dollars": -0.013369548265863118
+      },
+      "naive_tworate": {
+        "mae_dollars": 54902.92166766027,
+        "rmse_dollars": 427982.6930940003,
+        "r2_dollars": -0.013853080153228614
+      },
+      "log_linear_ridge": {
+        "best_alpha": 1.0,
+        "r2_log": 0.48483572370120576,
+        "rmse_log": 1.3778064989007117,
+        "mae_log": 0.9985915177793626,
+        "duan_factor": 25.04280568326903,
+        "mae_dollars": 541612.5795290052,
+        "rmse_dollars": 1692841.70319836,
+        "r2_dollars": -14.861903709898
+      },
+      "tweedie_xgboost": {
+        "mae_dollars": 43437.361149942946,
+        "rmse_dollars": 307617.9699962283,
+        "r2_dollars": 0.4762234940224276
+      }
+    },
+    {
+      "split": "Fold 4",
+      "effective_train_size": 79238,
+      "val_size": 13160,
+      "naive_median": {
+        "mae_dollars": 80174.17036094224,
+        "rmse_dollars": 524297.1914109327,
+        "r2_dollars": -0.020047245168280714
+      },
+      "naive_tworate": {
+        "mae_dollars": 79760.66983737686,
+        "rmse_dollars": 524448.0250015304,
+        "r2_dollars": -0.02063423866162606
+      },
+      "log_linear_ridge": {
+        "best_alpha": 1.0,
+        "r2_log": -0.12568757582386003,
+        "rmse_log": 2.1031500000544017,
+        "mae_log": 1.710349947121531,
+        "duan_factor": 22.785695793648426,
+        "mae_dollars": 116579.81842188248,
+        "rmse_dollars": 468059.80564211006,
+        "r2_dollars": 0.18704235280871095
+      },
+      "tweedie_xgboost": {
+        "mae_dollars": 53857.44587125848,
+        "rmse_dollars": 385967.9294053058,
+        "r2_dollars": 0.44720047030546917
+      }
+    }
+  ],
+  "holdout_2020": {
+    "split": "2020 Holdout",
+    "effective_train_size": 92398,
+    "val_size": 27457,
+    "naive_median": {
+      "mae_dollars": 77748.64469133555,
+      "rmse_dollars": 696387.4578826136,
+      "r2_dollars": -0.010683068750437785
+    },
+    "naive_tworate": {
+      "mae_dollars": 77359.87188815755,
+      "rmse_dollars": 696507.9945804479,
+      "r2_dollars": -0.011032974371194104
+    },
+    "log_linear_ridge": {
+      "best_alpha": 1.0,
+      "r2_log": -1.7020890771632775,
+      "rmse_log": 3.1238809051130083,
+      "mae_log": 2.667679302810422,
+      "duan_factor": 33.238772828566916,
+      "mae_dollars": 147416.75917023682,
+      "rmse_dollars": 793975.3477917699,
+      "r2_dollars": -0.3137936099144971
+    },
+    "tweedie_xgboost": {
+      "mae_dollars": 55411.30447627451,
+      "rmse_dollars": 569691.1298170389,
+      "r2_dollars": 0.3236180277088926
+    }
+  },
+  "cross_fold_summary": {
+    "naive_median": {
+      "mae_dollars_mean": 89479.80893413167,
+      "mae_dollars_std": 23921.665808210197,
+      "rmse_dollars_mean": 654323.4555851868,
+      "rmse_dollars_std": 207354.0153029765,
+      "r2_dollars_mean": -0.017154155464378595,
+      "r2_dollars_std": 0.003798994546049366
+    },
+    "naive_tworate": {
+      "mae_dollars_mean": 89259.7301300617,
+      "mae_dollars_std": 23989.560808086364,
+      "rmse_dollars_mean": 654443.7412786784,
+      "rmse_dollars_std": 207347.7850545968,
+      "r2_dollars_mean": -0.01756797162384721,
+      "r2_dollars_std": 0.003852275373634041
+    },
+    "log_linear_ridge": {
+      "best_alpha_mean": 5.5,
+      "best_alpha_std": 4.5,
+      "r2_log_mean": 0.30989564559625665,
+      "r2_log_std": 0.25335228872533877,
+      "rmse_log_mean": 1.648760889705983,
+      "rmse_log_std": 0.2785579136203677,
+      "mae_log_mean": 1.2579366027748071,
+      "mae_log_std": 0.27478373325278155,
+      "duan_factor_mean": 31.64852137789811,
+      "duan_factor_std": 9.03846322800625,
+      "mae_dollars_mean": 706868.8274739751,
+      "mae_dollars_std": 417253.62613025523,
+      "rmse_dollars_mean": 2133369.2567263967,
+      "rmse_dollars_std": 1169519.2145350606,
+      "r2_dollars_mean": -12.07703174433051,
+      "r2_dollars_std": 9.745528329725873
+    },
+    "tweedie_xgboost": {
+      "mae_dollars_mean": 61285.21610202112,
+      "mae_dollars_std": 13668.729491986773,
+      "rmse_dollars_mean": 515055.93533150357,
+      "rmse_dollars_std": 190509.08969487678,
+      "r2_dollars_mean": 0.3887653695123263,
+      "r2_dollars_std": 0.07374168951080795
+    }
+  }
+}

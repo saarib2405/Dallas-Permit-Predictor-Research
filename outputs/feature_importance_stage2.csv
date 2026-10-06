@@ -1,0 +1,53 @@
+feature,importance
+work_type_Alteration,0.52189696
+permit_category_Building,0.12270631
+permit_category_Mechanical,0.08887656
+work_type_New Construction,0.07958434
+work_type_Renovation,0.033121064
+log_area,0.021975024
+Area,0.017979745
+permit_category_Plumbing,0.012097336
+permit_category_Swimming Pool,0.01020693
+permit_category_Electrical,0.009148855
+"permit_category_Paving (Sidewalk, Drive Approaches)",0.0074375654
+work_type_Addition,0.007389789
+work_type_Finish Out,0.0062103537
+permit_category_Liquor License,0.0046181185
+sub_category_Commercial,0.0045251586
+sub_category_Single Family,0.004505085
+permit_category_Tent,0.0038268778
+permit_category_Lawn Sprinkler,0.0034858766
+sub_category_Multi Family,0.0033398839
+permit_category_Fire Sprinkler (Major Work),0.0029986198
+permit_category_Security System,0.0027454046
+zip_log_val_encoded,0.0026713787
+permit_category_Fence,0.0022692033
+work_type_Reconstruction,0.002179117
+permit_category_Fire Alarm,0.0019447715
+contractor_permit_count,0.0019386563
+permit_code_freq,0.0019007438
+permit_category_Excavation,0.0018172084
+permit_category_Grading and Paving,0.0016981409
+is_repeat_contractor,0.0015827367
+permit_category_Backflow,0.0013256165
+contractor_city_freq,0.0013071579
+land_use_freq,0.0012441152
+permit_category_Tree Removal,0.0012201156
+permit_category_Fire Sprinkler (Minor Work),0.0011012404
+is_q4,0.0010328636
+permit_category_Barricade,0.0009597719
+permit_category_Mechanical Refrigeration,0.0009214355
+days_since_epoch,0.00091274275
+permit_category_Flammable Liquid,0.00079182663
+issue_month,0.0007325159
+issue_quarter,0.00070152327
+issue_day_of_week,0.000650821
+issue_year,0.00042047616
+permit_category_Elevator,0.0
+permit_category_Electrical Sign,0.0
+permit_category_Demolition,0.0
+permit_category_Medical Gas,0.0
+permit_category_Sign,0.0
+permit_category_Special Purpose Sign,0.0
+permit_category_Supergraphics,0.0
+work_type_Demolition,0.0
