@@ -19,8 +19,8 @@ We evaluated the `is_zero_value` percentage across the training window and valid
 | **Fold 3** | 2019 Q3 (Summer)  | 71,330 | 15.41% | 14,890 | 31.24% | +15.83 pp| +102.8% |
 | **Fold 4** | 2019 Q4 (Year-end)| 86,220 | 18.14% | 13,160 | 35.39% | +17.25 pp| +95.1% |
 
-#### Key Insight: The Structural Regime Shift in Building Permits
-While Fold 2's aggregate zero rate only rose modestly (+1.08 pp), decomposing by permit category reveals a profound structural shift that begins specifically in **2019 Q2**:
+#### Key Insight: Observed Change in Recording Patterns for Building Permits
+While Fold 2's aggregate zero rate only rose modestly (+1.08 pp), decomposing by permit category reveals an observed change in recording pattern that begins specifically in **2019 Q2**:
 
 | Year & Quarter | Building Permits Total | Building Permits Zero-Value Count | Building Permit Zero % |
 |----------------|------------------------|-----------------------------------|-----------------------|
@@ -35,7 +35,7 @@ While Fold 2's aggregate zero rate only rose modestly (+1.08 pp), decomposing by
 | **2020 (Holdout)** | 8,997 | 4,073 | **45.27%** |
 
 - **Why Stage 1 Recall Dropped in Fold 2**:
-  Throughout 2018 and 2019 Q1 (Fold 2's training data), standard Building permits (e.g., Single Family Alterations, Commercial Renovations) were $>97.5\%$ positive-value. In 2019 Q2, Dallas began recording zero-value building permits at triple the historical rate. Because Fold 2's model had never seen regular building categories with zero value, it predicted them as positive (false negatives for zero), reducing zero-class recall to $0.669$. By Folds 3 and 4, the training set included Q2/Q3 data where the model learned this new pattern.
+  Throughout 2018 and 2019 Q1 (Fold 2's training data), standard Building permits (e.g., Single Family Alterations, Commercial Renovations) were $>97.5\%$ positive-value. In 2019 Q2, Dallas began recording zero-value building permits at triple the historical rate—an observed change in recording pattern. Because Fold 2's model had never seen regular building categories with zero value, it predicted them as positive (false negatives for zero), reducing zero-class recall to $0.669$. By Folds 3 and 4, the training set included Q2/Q3 data where the model learned this new pattern.
 
 ---
 

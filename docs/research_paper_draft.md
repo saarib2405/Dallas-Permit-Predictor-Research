@@ -9,11 +9,11 @@
 
 ## Abstract
 
-Accurate estimation of declared construction valuations from municipal building permit applications is essential for urban infrastructure planning, municipal tax base forecasting, and regulatory compliance. However, municipal permit records exhibit two challenging statistical properties: (1) an extreme zero-inflation spike ($\approx 24\%$) caused by non-construction administrative, regulatory, and demolition filings, and (2) severe right-skewness spanning seven orders of magnitude (from $\$0$ to over $\$64.5\text{M}$). Prior attempts to model this dataset suffered from subtle methodological flaws, including lookahead leakage in static frequency encodings, target leakage via self-labeled encoding and target-derived features, and uncorrected retransformation bias under log-normal transformations. 
+Accurate estimation of declared building-permit values from municipal building permit applications is essential for urban infrastructure planning and regulatory compliance. However, municipal permit records exhibit two challenging statistical properties: (1) an extreme zero-inflation spike ($\approx 24\%$) associated with non-construction administrative, regulatory, and demolition filings, and (2) severe right-skewness spanning seven orders of magnitude (from $\$0$ to over $\$64.5\text{M}$). Prior attempts to model this dataset suffered from subtle methodological flaws, including lookahead leakage in static frequency encodings, target leakage via self-labeled encoding and target-derived features, and uncorrected retransformation bias under log-normal transformations. 
 
 In this work, we propose a rigorous, leakage-free **Two-Stage Hurdle Architecture** combining an XGBoost binary classification hurdle with an uncapped log-scale XGBoost regressor corrected by empirical **Duan Smearing**. Crucially, we enforce a strict 60-day cold-start burn-in exclusion on model parameter fitting (`df_train_fit`) while preserving complete continuous expanding historical counts, guaranteeing zero leakage. We evaluate our framework using a strict 4-fold forward-chaining cross-validation schedule across 2019 and a quarantined, one-shot holdout evaluation on 2020 ($N = 27,457$, through August 29, 2020). Across 2019 folds, our model achieves a primary log-space $R^2$ of $0.7145 \pm 0.0360$ and log-RMSE of $1.07 \pm 0.04$. On the 2020 holdout, the model achieves a log-space $R^2$ of $0.6349$, with a Stage 1 classifier ROC-AUC of $0.9678$ and an uncapped Dollar $R^2$ of $0.5192$. 
 
-Furthermore, we present two major empirical and data-engineering contributions: (1) an in-depth root-cause investigation of a historical performance anomaly in 2019 Q2, demonstrating that it was driven by an administrative regime shift (Dallas began recording zero-value building permits at triple the historical rate) and metric denominator compression in dollar space; and (2) a forensic audit of the composite permit parser, identifying 13 unparsed regulatory string patterns (10,361 permits, $100\%$ zero-value) that had created a synthetic binary shortcut feature (`work_type_Other`), which we resolved to restore genuine domain feature importance. Finally, comparative evaluations against Naive, Log-Linear Ridge, and Non-Hurdle Tweedie XGBoost baselines confirm the architectural superiority of the two-stage hurdle approach.
+Furthermore, we present two major empirical and data-engineering contributions: (1) an in-depth root-cause investigation of a historical performance anomaly in 2019 Q2, identifying an observed change in recording pattern (Dallas began recording zero-value building permits at triple the historical rate) and metric denominator compression in dollar space; and (2) a forensic audit of the composite permit parser, identifying 13 unparsed regulatory string patterns (10,361 permits, $100\%$ zero-value) that had created a synthetic binary shortcut feature (`work_type_Other`), which we resolved to restore genuine domain feature importance. Finally, comparative evaluations against Naive, Log-Linear Ridge, and Non-Hurdle Tweedie XGBoost baselines reveal clear trade-offs between modeling paradigms: while the Two-Stage Hurdle model achieves higher overall dollar $R^2$ (cross-fold mean $0.4542$ vs. $0.3888$) and superior generalization on the 2020 holdout ($0.5192$ vs. $0.3236$), the single-stage Tweedie model wins across all three dollar metrics in Fold 3 (Dollar $R^2$ of $0.4762$ vs. $0.4344$, MAE of $\$43,437$ vs. $\$50,216$, RMSE of $\$307,618$ vs. $\$319,678$) and achieves lower MAE in Fold 2 ($\$68,718$ vs. $\$72,340$).
 
 ---
 
@@ -98,7 +98,7 @@ The empirical framework operates on 126,837 cleaned permit records spanning Janu
 |                                       v                                                 |
 |                       [Dual Hurdle Retransformation]                                    |
 |              Soft: E[V] = (1 - p) * S * exp(y_log)                                      |
-|              Hard: E[V] = S * exp(y_log) if p < 0.5 else $0                             |
+|              Hard (Decision-Rule Prediction): V_hat = S * exp(y_log) if p < 0.5 else $0 |
 +-----------------------------------------------------------------------------------------+
 ```
 
@@ -135,6 +135,8 @@ Because $\mathbb{E}[\exp(\epsilon)] \ge \exp(\mathbb{E}[\epsilon]) = 1$, naively
 $$S = \frac{1}{N_{\text{pos}}} \sum_{i=1}^{N_{\text{pos}}} \exp\left(y_i - \hat{y}_i\right)$$
 
 The smearing factor $S$ is fitted strictly on positive training residuals ($S \approx 1.46\text{--}1.55$ across cross-validation folds, and $1.61$ on the full production model) and applied during dollar-space retransformation.
+
+For downstream valuation, predictions are evaluated under two distinct paradigms: (1) **soft continuous expected value**, $\mathbb{E}[V] = (1 - p) \cdot S \cdot \exp(\hat{y}_{\log})$, and (2) the discrete **decision-rule prediction** (hard hurdle), $\hat{V} = S \cdot \exp(\hat{y}_{\log})$ if $p < 0.5$ else $\$0$. All primary dollar-space evaluation metrics reported throughout this study reflect this hard decision-rule prediction.
 
 ---
 
@@ -204,9 +206,9 @@ Table 4 displays the evaluation on the quarantined 2020 holdout dataset ($N = 27
 
 In initial cross-validation runs, Fold 2 (2019 Q2) exhibited an apparent performance anomaly: Stage 1 recall dropped to $0.669$ (vs. $0.86\text{--}0.95$ in other folds), and Dollar $R^2$ was $0.201$ (vs. $0.42\text{--}0.54$). We investigated this systematically.
 
-### 4.1 Root Cause 1: The Dallas Administrative Zero-Value Regime Shift
+### 4.1 Root Cause 1: Observed Change in Zero-Value Recording Patterns
 
-Decomposing the zero-value rate across time revealed that Fold 2 coincided exactly with the onset of an administrative policy shift in how the City of Dallas filed building permits.
+Decomposing the zero-value rate across time revealed that Fold 2 coincided with an observed change in recording pattern in how the City of Dallas filed building permits.
 
 #### Table 5: Emergence of Zero-Value Building Permits Across Quarters
 *Source: `src/diagnostics_fold2_and_parser.py` (Sections 1.1 & 1.2)*
@@ -223,7 +225,7 @@ Decomposing the zero-value rate across time revealed that Fold 2 coincided exact
 | **2019 Q4** | Fold 4 Validation | 4,974 | 2,147 | **43.16%** *(16.7x jump)* |
 | **2020** | Holdout Period | 8,997 | 4,073 | **45.27%** |
 
-Throughout 2018 and 2019 Q1 (Fold 2's training data), standard Building permits were $>97.5\%$ positive-value. In 2019 Q2, Dallas began recording zero-value building permits at triple the historical rate. Because Fold 2's training set had never observed building permits with declared zero values, the classifier initially predicted them as positive (false negatives for zero), reducing zero-class recall. By Folds 3 and 4, the training set included Q2/Q3 data, and the model adapted to the new regime.
+Throughout 2018 and 2019 Q1 (Fold 2's training data), standard Building permits were $>97.5\%$ positive-value. In 2019 Q2, Dallas began recording zero-value building permits at triple the historical rate—reflecting an observed change in recording pattern. Because Fold 2's training set had never observed building permits with declared zero values, the classifier initially predicted them as positive (false negatives for zero), reducing zero-class recall. By Folds 3 and 4, the training set included Q2/Q3 data, and the model adapted to the newly observed recording patterns.
 
 ### 4.2 Root Cause 2: Dollar-Space Denominator Compression
 
@@ -292,9 +294,9 @@ In the baseline model, `work_type_Other` and `sub_category_General` captured an 
 
 ---
 
-## 6. Ablation Study: Isolating the Parser-Fix Causal Mechanism
+## 6. Ablation Study: Evaluating the Parser-Fix Effect
 
-To test whether the performance shifts were causally driven by removing the synthetic proxy, we conducted an ablation study comparing:
+To test whether the performance shifts were linked to removing the synthetic proxy, we conducted an ablation study comparing:
 1. **v2 Baseline**: Raw dataset with synthetic `work_type_Other` and `sub_category_General`.
 2. **Ablation Variant**: Identical v2 data and pipeline, but **dropping only `work_type_Other` and `sub_category_General`** from Stage 1 (no new categories added), evaluated under the strict 60-day burn-in exclusion.
 3. **v3.1 Production**: Full multi-pattern parser with domain categories and burn-in exclusion.
@@ -325,11 +327,12 @@ To test whether the performance shifts were causally driven by removing the synt
 | | Stage 1 AUC | 0.9646 | **0.9685** | 0.9678 | $+0.0039$ | $+0.0032$ |
 | | Dollar $R^2$ (Hard) | 0.5278 | 0.5052 | **0.5192** | $-0.0226$ | $-0.0086$ |
 
-### 6.1 Confirmation of the Splitting-Budget Redistribution Hypothesis
+### 6.1 Evaluation of the Splitting-Budget Redistribution Hypothesis
 
-The ablation empirically evaluates the causal mechanism:
-1. **Classifier Split Redistribution**: Removing the synthetic shortcut features (`work_type_Other` and `sub_category_General`) forces the tree ensembles to distribute their splitting budget across true contextual features (geographic location, contractor history, land use, and structural permit categories). In Fold 2, classification recall rises from $0.6688$ to $0.6717$ in the ablation and $0.6969$ in v3.1, while F1 improves from $0.7932$ to $0.8137$.
-2. **Domain Categories and Valuation Fidelity**: Supplying explicit regulatory categories (`Electrical Sign`, `Demolition`, etc.) provides critical structural discriminators. An empirical confusion audit on all 10,361 Sign and Demolition records (`src/ablation_stage1_parser_effect.py`) confirmed that both the ablation model and v3.1 classify $\ge 99.9\%$ of Sign/Demolition permits as $\$0$ under hard thresholding ($0$ misclassifications in Folds 1 and 2; only $1$ in Fold 3 and Fold 4). Crucially, under continuous soft probability weighting, v3.1's calibrated class probabilities substantially reduce dollar leakage on zero-value regulatory filings: soft MAE on Sign/Demolition filings drops from $\$2,175$ to $\$553$ in Fold 1, and from $\$1,076$ to $\$216$ in Fold 2.
+The ablation empirically evaluates this mechanism:
+1. **Classifier Split Redistribution**: Removing the synthetic shortcut features (`work_type_Other` and `sub_category_General`) encourages the tree ensembles to distribute their splitting budget across true contextual features (geographic location, contractor history, land use, and structural permit categories). In Fold 2, classification recall rises from $0.6688$ to $0.6717$ in the ablation and $0.6969$ in v3.1, while F1 improves from $0.7932$ to $0.8137$.
+2. **Domain Categories and Valuation Fidelity**: Supplying explicit regulatory categories (`Electrical Sign`, `Demolition`, etc.) provides critical structural discriminators. An empirical confusion audit on all 10,361 Sign and Demolition records (`src/ablation_stage1_parser_effect.py`) confirmed that both the ablation model and v3.1 classify $\ge 99.9\%$ of Sign/Demolition permits as $\$0$ under hard thresholding ($0$ misclassifications in Folds 1 and 2; only $1$ in Fold 3 and Fold 4). Under continuous soft probability weighting, v3.1's calibrated class probabilities substantially reduce dollar leakage on zero-value regulatory filings: soft MAE on Sign/Demolition filings drops from $\$2,175$ to $\$553$ in Fold 1, and from $\$1,076$ to $\$216$ in Fold 2.
+3. **Mixed Dollar-Scale Impact**: Crucially, while Stage 1 classification metrics and zero-leakage suppression improve consistently, the downstream dollar-scale effect is mixed across evaluation splits rather than a uniform improvement. In Fold 2, Dollar $R^2$ recovers substantially ($0.2007 \to 0.3370$, $+0.1363$), and Fold 3 exhibits modest gains ($0.4218 \to 0.4344$, $+0.0126$). However, in Fold 1 ($0.5124 \to 0.5068$, $-0.0056$), Fold 4 ($0.5401 \to 0.5386$, $-0.0015$), and the 2020 holdout ($0.5278 \to 0.5192$, $-0.0086$), the dollar-scale impact is essentially flat or slightly lower. The primary justification for the parser fix is therefore architectural integrity and domain interpretability—eliminating artificial feature shortcuts and restoring valid regulatory categories—rather than an unequivocal dollar-scale metric gain across every fold.
 
 ---
 
@@ -351,7 +354,7 @@ To validate the decision to adopt the uncapped model as the primary specificatio
 | **Fold 4** | Primary Uncapped | **0.6899** | **1.1038** | **0.8336** | **0.5386** | **$47,685** | **$352,633** |
 | | Sensitivity (p99-Capped) | 0.6905 | 1.1029 | 0.8351 | 0.4835 | $51,013 | $373,079 |
 
-> **Methodological Takeaway:** In Fold 1, training on a p99-capped target caused Dollar $R^2$ to collapse from $0.5068$ to $0.1815$ and increased RMSE by over $\$195,000$. Artificially truncating the training target introduces severe negative bias when predicting high-value commercial construction projects. The uncapped model provides superior fidelity across the full distribution.
+> **Methodological Takeaway:** In Fold 1, training on a p99-capped target was associated with a Dollar $R^2$ collapse from $0.5068$ to $0.1815$ and an RMSE increase of over $\$195,000$. Artificially truncating the training target introduces severe negative bias when predicting high-value commercial construction projects. The uncapped model provides superior fidelity across the full distribution.
 
 ---
 
@@ -391,7 +394,10 @@ To rigorously establish whether the two-stage hurdle architecture provides tangi
 > **Key Comparative Findings:**
 > 1. **Log-Space Competence vs. Dollar Retransformation Degradation in Log-Linear Models:** In native log space on positive permits, regularized log-linear Ridge regression demonstrates reasonable explanatory power across the first three folds ($R^2_{\log} \in [0.405, 0.485]$). However, when predictions are retransformed to the dollar scale across the entire permit population via Duan smearing, performance degrades substantially (Dollar $R^2 \le 0$ across Folds 1–3 and the 2020 Holdout). This illustrates the fundamental instability of applying single-stage log transformations to zero-inflated distributions without an explicit probability hurdle.
 > 2. **Tweedie Under-Fitting in Upper Tails:** While the single-stage Tweedie XGBoost regressor natively accommodates exact zeros without retransformation bias, it exhibits reduced upper-tail flexibility, yielding a 2020 Holdout Dollar $R^2$ of $0.3236$ (compared to **$0.5192$** for the Two-Stage Hurdle model).
-> 3. **Dominance of Hurdle Decoupling:** Decoupling the binary occurrence probability $\Pr(V > 0)$ from the conditional valuation magnitude $\mathbb{E}[V \mid V > 0]$ produces superior stability in both log space ($R^2_{\log} \in [0.635, 0.757]$) and dollar space across all forward-chaining evaluation periods.
+> 3. **Architectural Trade-Offs Between Hurdle and Compound Models:** Decoupling occurrence probability from conditional valuation is not unconditionally superior across all metrics and time horizons, but highlights a distinct practical trade-off:
+>    - **Hurdle Model Wins**: Achieves higher overall dollar $R^2$ across cross-validation (cross-fold mean $0.4542$ vs. $0.3888$) and substantially better prospective holdout generalization on 2020 ($0.5192$ vs. $0.3236$). It also maintains lower Dollar RMSE on Fold 1 ($\$679,805$ vs. $\$803,435$), Fold 2 ($\$556,364$ vs. $\$563,203$), Fold 4 ($\$352,633$ vs. $\$385,968$), and the 2020 Holdout ($\$480,333$ vs. $\$569,691$).
+>    - **Tweedie Model Wins**: Wins across all three dollar metrics in Fold 3 (higher Dollar $R^2$ of $0.4762$ vs. $0.4344$, lower MAE of $\$43,437$ vs. $\$50,216$, and lower RMSE of $\$307,618$ vs. $\$319,678$), and achieves lower dollar MAE in Fold 2 ($\$68,718$ vs. $\$72,340$).
+>    - **Practical Implication**: The Two-Stage Hurdle model is preferable when long-term prospective holdout stability, upper-tail commercial valuation fidelity, and overall variance explained ($R^2$) are prioritized, while single-stage Tweedie offers strong competition during transitional quarters where median/MAE absolute error is the primary operational benchmark.
 
 ---
 
