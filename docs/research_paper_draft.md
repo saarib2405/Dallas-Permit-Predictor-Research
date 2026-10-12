@@ -1,7 +1,7 @@
-# Predictive Modeling of Municipal Building Permit Valuations: A Leakage-Free Two-Stage Hurdle Framework with Empirical Regime Diagnostics
+# Predictive Modeling of Municipal Building Permit Values: A Leakage-Free Two-Stage Hurdle Framework with Empirical Regime Diagnostics
 
 **Authors:** Data Science & Analytics Research Group  
-**Project:** ASDS 6302 Final Project — Dallas Building Permits Valuation Study  
+**Project:** ASDS 6302 Final Project — Dallas Building Permits Value Study  
 **Document Version:** v3.1 (Burn-In Fixed Research Draft)  
 **Date:** September 2026  
 
@@ -55,11 +55,11 @@ The empirical framework operates on 126,837 cleaned permit records spanning Janu
 | **Development Horizon (2018–2019)** | 99,380 ($78.35\%$) | 4-fold forward-chaining cross-validation corpus |
 | **Quarantined Holdout (2020)** | 27,457 ($21.65\%$) | One-shot prospective test set (Jan 1 – Aug 29, 2020) |
 | **Zero-Valuation Filings ($V = \$0$)** | **30,051 (23.69%)** | Regulatory, administrative, sign, and demolition permits |
-| **Positive Valuation Filings ($V > \$0$)**| **96,786 (76.31%)** | Construction projects subject to Stage 2 log regression |
+| **Positive Valuation Filings ($V > \$0$)**| **96,786 (76.31%)** | Positive-value permit filings subject to Stage 2 log regression |
 | **Minimum Value** | $\$0.00$ | Baseline administrative permits |
 | **Median Positive Value** | $\$10,000.00$ | Typical residential trade / alteration work |
 | **Mean Positive Value** | $\$124,314.12$ | Skewed by major commercial developments |
-| **Maximum Declared Valuation** | **$\$64,565,291.00$** | Commercial Warehouse New Construction (Issued: 2018-07-26) |
+| **Maximum Declared Value** | **$\$64,565,291.00$** | Commercial Warehouse New Construction (Issued: 2018-07-26) |
 | **Valuation Span** | $7$ orders of magnitude | $\log(V)$ range: $-4.61$ to $17.98$ for positive filings |
 
 ```
@@ -223,7 +223,7 @@ Decomposing the zero-value rate across time revealed that Fold 2 coincided with 
 | **2019 Q2** | **Fold 2 Validation** | **4,356** | **350** | **8.03%** *(3.1x jump)* |
 | **2019 Q3** | Fold 3 Validation | 6,184 | 2,235 | **36.14%** *(14.0x jump)* |
 | **2019 Q4** | Fold 4 Validation | 4,974 | 2,147 | **43.16%** *(16.7x jump)* |
-| **2020** | Holdout Period | 8,997 | 4,073 | **45.27%** |
+| **2020** | Holdout Period | 8,997 | 4,095 | **45.52%** |
 
 Throughout 2018 and 2019 Q1 (Fold 2's training data), standard Building permits were $>97.5\%$ positive-value. In 2019 Q2, Dallas began recording zero-value building permits at triple the historical rate—reflecting an observed change in recording pattern. Because Fold 2's training set had never observed building permits with declared zero values, the classifier initially predicted them as positive (false negatives for zero), reducing zero-class recall. By Folds 3 and 4, the training set included Q2/Q3 data, and the model adapted to the newly observed recording patterns.
 
@@ -267,7 +267,7 @@ To evaluate how much of the Stage 1 classification accuracy and prospective hold
 | **Full Development** (2018 to 2019 Q4) | Complete (Includes 2019 Q2–Q4) | **0.9345** | **0.8861** | **0.9058** | **0.9678** | **0.9402** | **0.9564** |
 | **Empirical Delta ($\Delta$)** | Coverage Recovery | $+0.1677$ | $+0.5346$ | $+0.3886$ | $+0.4795$ | **+0.9138** | **+0.9053** |
 
-> **Key Takeaway on Holdout Dependency:** The counterfactual experiment demonstrates that the Stage 1 model's high prospective performance on the 2020 holdout (Recall $0.8861$, ROC-AUC $0.9678$) is critically dependent on the training window extending through 2019 Q2–Q4 to capture the newly observed recording patterns. When trained strictly on pre-shift data, the classifier identifies only $2.6\%$ of zero-value building permits in 2020 (overall recall collapses to $0.3515$), because it was never exposed to building permits declaring $\$0$. Once training data encompasses the emergent patterns, building zero recall jumps to $94.02\%$, establishing that prospective generalization reflects empirical adaptation to updated municipal filing patterns rather than static distributional stability.
+> **Key Takeaway on Holdout Dependency:** The counterfactual findings are consistent with the hypothesis that the Stage 1 model's high prospective performance on the 2020 holdout (Recall $0.8861$, ROC-AUC $0.9678$) is critically dependent on the training window extending through 2019 Q2–Q4 to capture the newly observed recording patterns. When trained strictly on pre-shift data, the classifier identifies only $2.6\%$ of zero-value building permits in 2020 (overall recall collapses to $0.3515$), because it was never exposed to building permits declaring $\$0$. Once training data encompasses the emergent patterns, building zero recall jumps to $94.02\%$, which is consistent with prospective generalization reflecting empirical adaptation to updated municipal filing patterns rather than static distributional stability.
 
 ---
 
@@ -335,7 +335,7 @@ To test whether the performance shifts were linked to removing the synthetic pro
 | **Fold 1** (2019 Q1) | Stage 1 Recall | 0.8633 | **0.8167** | **0.8722** | $-0.0466$ | $+0.0089$ |
 | | Stage 1 F1 | 0.9207 | 0.8932 | **0.9256** | $-0.0275$ | $+0.0049$ |
 | | Stage 1 AUC | **0.9782** | 0.9737 | 0.9766 | $-0.0045$ | $-0.0016$ |
-| | Dollar $R^2$ (Hard) | 0.5124 | **0.5184** | 0.5068 | $+0.0060$ | $-0.0560$ |
+| | Dollar $R^2$ (Hard) | 0.5124 | **0.5184** | 0.5068 | $+0.0060$ | $-0.0056$ |
 | **Fold 2** (2019 Q2) | Stage 1 Recall | 0.6688 | **0.6717** | **0.6969** | $+0.0029$ | **+0.0281** |
 | | Stage 1 F1 | 0.7932 | 0.7946 | **0.8137** | $+0.0014$ | **+0.0205** |
 | | Stage 1 AUC | **0.8541** | 0.8488 | 0.8535 | $-0.0053$ | $-0.0006$ |
@@ -358,7 +358,7 @@ To test whether the performance shifts were linked to removing the synthetic pro
 The ablation empirically evaluates this mechanism:
 1. **Classifier Split Redistribution**: Removing the synthetic shortcut features (`work_type_Other` and `sub_category_General`) encourages the tree ensembles to distribute their splitting budget across true contextual features (geographic location, contractor history, land use, and structural permit categories). In Fold 2, classification recall rises from $0.6688$ to $0.6717$ in the ablation and $0.6969$ in v3.1, while F1 improves from $0.7932$ to $0.8137$.
 2. **Domain Categories and Valuation Fidelity**: Supplying explicit regulatory categories (`Electrical Sign`, `Demolition`, etc.) provides critical structural discriminators. An empirical confusion audit on all 10,361 Sign and Demolition records (`src/ablation_stage1_parser_effect.py`) confirmed that both the ablation model and v3.1 classify $\ge 99.9\%$ of Sign/Demolition permits as $\$0$ under hard thresholding ($0$ misclassifications in Folds 1 and 2; only $1$ in Fold 3 and Fold 4). Under continuous soft probability weighting, v3.1's calibrated class probabilities substantially reduce dollar leakage on zero-value regulatory filings: soft MAE on Sign/Demolition filings drops from $\$2,175$ to $\$553$ in Fold 1, and from $\$1,076$ to $\$216$ in Fold 2.
-3. **Mixed Dollar-Scale Impact**: Crucially, while Stage 1 classification metrics and zero-leakage suppression improve consistently, the downstream dollar-scale effect is mixed across evaluation splits rather than a uniform improvement. In Fold 2, Dollar $R^2$ recovers substantially ($0.2007 \to 0.3370$, $+0.1363$), and Fold 3 exhibits modest gains ($0.4218 \to 0.4344$, $+0.0126$). However, in Fold 1 ($0.5124 \to 0.5068$, $-0.0056$), Fold 4 ($0.5401 \to 0.5386$, $-0.0015$), and the 2020 holdout ($0.5278 \to 0.5192$, $-0.0086$), the dollar-scale impact is essentially flat or slightly lower. The primary justification for the parser fix is therefore architectural integrity and domain interpretability—eliminating artificial feature shortcuts and restoring valid regulatory categories—rather than an unequivocal dollar-scale metric gain across every fold.
+3. **Mixed Dollar-Scale Impact**: Crucially, while Stage 1 recall and F1 improve in every fold alongside zero-leakage suppression, the downstream dollar-scale effect is mixed across evaluation splits rather than a uniform improvement. In Fold 2, Dollar $R^2$ recovers substantially ($0.2007 \to 0.3370$, $+0.1363$), and Fold 3 exhibits modest gains ($0.4218 \to 0.4344$, $+0.0126$). However, in Fold 1 ($0.5124 \to 0.5068$, $-0.0056$), Fold 4 ($0.5401 \to 0.5386$, $-0.0015$), and the 2020 holdout ($0.5278 \to 0.5192$, $-0.0086$), the dollar-scale impact is essentially flat or slightly lower. The primary justification for the parser fix is therefore architectural integrity and domain interpretability—eliminating artificial feature shortcuts and restoring valid regulatory categories—rather than an unequivocal dollar-scale metric gain across every fold.
 
 ---
 

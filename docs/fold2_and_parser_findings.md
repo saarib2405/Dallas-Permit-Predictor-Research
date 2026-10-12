@@ -32,7 +32,7 @@ While Fold 2's aggregate zero rate only rose modestly (+1.08 pp), decomposing by
 | **2019 Q2 (Fold 2 Val)** | 4,356 | 350 | **8.03%** *(3x surge)* |
 | **2019 Q3** | 6,184 | 2,235 | **36.14%** *(14x surge)* |
 | **2019 Q4** | 4,974 | 2,147 | **43.16%** *(17x surge)* |
-| **2020 (Holdout)** | 8,997 | 4,073 | **45.27%** |
+| **2020 (Holdout)** | 8,997 | 4,095 | **45.52%** |
 
 - **Why Stage 1 Recall Dropped in Fold 2**:
   Throughout 2018 and 2019 Q1 (Fold 2's training data), standard Building permits (e.g., Single Family Alterations, Commercial Renovations) were $>97.5\%$ positive-value. In 2019 Q2, Dallas began recording zero-value building permits at triple the historical rate—an observed change in recording pattern. Because Fold 2's model had never seen regular building categories with zero value, it predicted them as positive (false negatives for zero), reducing zero-class recall to $0.669$. By Folds 3 and 4, the training set included Q2/Q3 data where the model learned this new pattern.
