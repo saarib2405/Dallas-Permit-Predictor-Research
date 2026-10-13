@@ -13,19 +13,17 @@ authors:
     email: moath.alshannaq@uta.edu
     affiliation: University of Texas at Arlington
     orcid: 'https://orcid.org/0000-0001-6187-0462'
-  # Rashid: please complete the three fields below.
   - given-names: Syed Saarib
     family-names: Rasheed
-    email: TODO
-    affiliation: TODO
-    orcid: 'TODO — omit this line entirely if you do not have an ORCID'
-  # Dr. Abeer: email, affiliation and ORCID to confirm.
+    affiliation: University of Texas at Arlington
   - given-names: Abeer
     family-names: Almughrabi
-    email: TODO
-    affiliation: TODO
-    orcid: 'TODO — omit this line entirely if not available'
+    affiliation: University of Texas at Arlington
 repository-code: 'https://github.com/saarib2405/Dallas-Permit-Predictor-Research'
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.23350763
+    description: Archived release of this repository
 abstract: >-
   Research code, cleaned corpus and result files for a leakage-free
   two-stage hurdle model of declared building-permit value, built on
@@ -38,8 +36,7 @@ abstract: >-
   the composite permit-type parser audit, naive, log-linear and Tweedie
   comparators, a p99 capping sensitivity analysis, a pre- and
   post-recording-shift evaluation of the classification stage, and a test
-  suite verifying that figures reported in the manuscript match the
-  result files.
+  suite verifying the internal consistency of the reported results.
 keywords:
   - data leakage
   - temporal validation
@@ -49,8 +46,4 @@ keywords:
   - urban analytics
   - gradient boosting
   - reproducibility
-identifiers:
-  - type: doi
-    value: 10.5281/zenodo.23350763
-    description: Archived release of this repository
 license: MIT
