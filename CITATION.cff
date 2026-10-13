@@ -1,0 +1,52 @@
+cff-version: 1.2.0
+title: >-
+  Dallas Building Permit Value Research: a leakage-free two-stage
+  hurdle pipeline for municipal permit records
+message: >-
+  If you use this software or data, please cite both this software
+  record and the associated journal article.
+type: software
+version: 1.0.0
+authors:
+  - given-names: Moath
+    family-names: Alshannaq
+    email: moath.alshannaq@uta.edu
+    affiliation: University of Texas at Arlington
+    orcid: 'https://orcid.org/0000-0001-6187-0462'
+  # Rashid: please complete the three fields below.
+  - given-names: Syed Saarib
+    family-names: Rasheed
+    email: TODO
+    affiliation: TODO
+    orcid: 'TODO — omit this line entirely if you do not have an ORCID'
+  # Dr. Abeer: email, affiliation and ORCID to confirm.
+  - given-names: Abeer
+    family-names: Almughrabi
+    email: TODO
+    affiliation: TODO
+    orcid: 'TODO — omit this line entirely if not available'
+repository-code: 'https://github.com/TODO-USERNAME/Dallas-Permit-Predictor-Research'
+abstract: >-
+  Research code, cleaned corpus and result files for a leakage-free
+  two-stage hurdle model of declared building-permit value, built on
+  126,837 City of Dallas permit records issued between January 2018 and
+  August 2020. The pipeline enforces chronological feature construction
+  through point-in-time expanding histories, stage-specific target
+  encodings frozen at each evaluation boundary, a 60-day cold-start
+  window excluded from model fitting, forward-chaining validation across
+  four 2019 quarters, and a single untouched 2020 holdout. Also includes
+  the composite permit-type parser audit, naive, log-linear and Tweedie
+  comparators, a p99 capping sensitivity analysis, a pre- and
+  post-recording-shift evaluation of the classification stage, and a test
+  suite verifying that figures reported in the manuscript match the
+  result files.
+keywords:
+  - data leakage
+  - temporal validation
+  - hurdle model
+  - building permits
+  - municipal open data
+  - urban analytics
+  - gradient boosting
+  - reproducibility
+license: MIT
