@@ -1,42 +1,76 @@
 # Dallas Building Permit Value Research
 
-This repository contains the econometric and machine learning research codebase for predicting municipal building permit declared valuations using an empirical two-stage hurdle model with continuous expanding features and cold-start burn-in exclusion.
+Research code, cleaned corpus and result files for a leakage-free two-stage hurdle
+model of **declared building-permit value**, built on City of Dallas permit records
+issued between January 2018 and August 2020.
 
-## Repository Structure
+The pipeline enforces chronological feature construction: historical count features
+use only permits issued before each prediction date, stage-specific target encodings
+are frozen at every evaluation boundary, a 60-day cold-start window is retained for
+feature construction but excluded from model fitting, validation is forward-chaining
+across four 2019 quarters, and the 2020 period is held out and evaluated once.
+
+## Repository structure
 
 ```text
-Dallas-Permit-Value-Research/
-├── README.md                          # Project overview and navigation guide
-├── requirements.txt                   # Minimal pinned dependencies for the research pipeline
-├── REPRODUCIBILITY.md                 # Step-by-step reproduction instructions and commands
+Dallas-Permit-Predictor-Research/
+├── README.md                             # Project overview and navigation guide
+├── REPRODUCIBILITY.md                    # Step-by-step reproduction commands
+├── requirements.txt                      # Pinned dependencies for the pipeline
+├── CITATION.cff                          # How to cite this repository
+├── LICENSE                               # MIT (code) and CC BY 4.0 (docs, outputs)
 ├── data/
-│   └── Building-Permits.csv           # Raw Dallas municipal building permit dataset (2018–2020)
+│   └── Building-Permits.csv              # Raw Dallas permit extract (2018–2020)
 ├── src/
-│   ├── data_cleaning.py               # Minimal cleaning and composite permit type parser
-│   ├── modeling_pipeline.py           # Primary two-stage hurdle pipeline (leakage-free, 4 folds + holdout)
-│   ├── ablation_stage1_parser_effect.py # Stage 1 ablation isolating synthetic feature removal
-│   ├── diagnostics_fold2_and_parser.py  # Forensic diagnostics on Fold 2 regime shift & parser fallbacks
-│   ├── baseline_comparisons.py        # Benchmark models (Naive Median, RidgeCV, Tweedie XGBoost)
-│   └── eval_stage1_shift.py           # Stage 1 recording pattern shift & holdout counterfactual
+│   ├── data_cleaning.py                  # Cleaning and composite permit-type parser
+│   ├── modeling_pipeline.py              # Two-stage hurdle pipeline, 4 folds + holdout
+│   ├── ablation_stage1_parser_effect.py  # Stage 1 ablation isolating the parser fix
+│   ├── diagnostics_fold2_and_parser.py   # Fold 2 and parser fallback diagnostics
+│   ├── baseline_comparisons.py           # Naive, RidgeCV and Tweedie XGBoost comparators
+│   └── eval_stage1_shift.py              # Pre/post recording-shift Stage 1 evaluation
 ├── outputs/
-│   ├── permits_research_cleaned.csv   # Cleaned research dataset (126,837 rows)
-│   ├── pipeline_results.json          # Primary cross-validation and 2020 holdout metrics
-│   ├── ablation_results.json          # Stage 1 ablation metrics
-│   ├── baseline_comparison_results.json # Comparative baseline model metrics
-│   ├── stage1_shift_eval_results.json # Stage 1 shift & counterfactual evaluation metrics
-│   ├── feature_importance_stage1.csv  # Stage 1 classifier feature importance
-│   ├── feature_importance_stage2.csv  # Stage 2 regressor feature importance
-│   └── consolidated_summary_table.md  # Consolidated table of all empirical metrics
-└── docs/
-    ├── research_paper_draft.md        # Academic research manuscript draft
-    ├── feature_audit.md               # Methodological audit identifying baseline flaws
-    └── fold2_and_parser_findings.md   # Root-cause diagnostic findings report
+│   ├── permits_research_cleaned.csv      # Cleaned corpus (126,837 rows)
+│   ├── pipeline_results.json             # Cross-validation and 2020 holdout metrics
+│   ├── ablation_results.json             # Stage 1 ablation metrics
+│   ├── baseline_comparison_results.json  # Comparator metrics
+│   ├── stage1_shift_eval_results.json    # Shift and counterfactual metrics
+│   ├── feature_importance_stage1.csv     # Stage 1 feature importance
+│   ├── feature_importance_stage2.csv     # Stage 2 feature importance
+│   └── consolidated_summary_table.md     # Consolidated empirical metrics
+├── docs/
+│   ├── feature_audit.md                  # Audit identifying the baseline flaws
+│   └── fold2_and_parser_findings.md      # Root-cause diagnostic findings
+└── tests/
+    └── test_manuscript_verification.py   # Verifies manuscript figures against results
 ```
 
-## Data Access
+## Data
 
-The raw dataset (`data/Building-Permits.csv`, ~31 MB, 126,837 records) is sourced from the City of Dallas Open Data portal spanning January 2018 through August 2020. If not already present in `data/`, place the CSV file in `data/Building-Permits.csv` or track it via Git LFS.
+The raw extract (`data/Building-Permits.csv`, approximately 31 MB, 126,837 records)
+comes from the City of Dallas Open Data portal and covers 2 January 2018 to
+29 August 2020. It is committed to this repository unmodified so the pipeline runs
+end to end without an external download.
 
-## How to Reproduce
+## Reproducing the results
 
-For end-to-end instructions and exact shell commands to execute the pipeline from raw CSV to final tables and figures, see [REPRODUCIBILITY.md](REPRODUCIBILITY.md).
+`REPRODUCIBILITY.md` gives the environment, the exact commands, and the order in
+which the four scripts run. The test suite in `tests/` checks that the figures
+reported in the manuscript match the generated result files:
+
+```bash
+pip install -r requirements.txt
+python -m pytest tests/
+```
+
+## Licence
+
+Code under `src/` and `tests/` is released under the MIT Licence. Documentation and
+derived outputs under `docs/` and `outputs/` are released under CC BY 4.0. The raw
+permit extract in `data/` remains City of Dallas open data and is redistributed
+unmodified under their terms. See `LICENSE` for details.
+
+## Citation
+
+If you use this software or the derived data, please cite the archived release and
+the associated article. See `CITATION.cff`, or use the "Cite this repository" button
+on the GitHub page.

@@ -25,7 +25,7 @@ authors:
     email: TODO
     affiliation: TODO
     orcid: 'TODO — omit this line entirely if not available'
-repository-code: 'https://github.com/TODO-USERNAME/Dallas-Permit-Predictor-Research'
+repository-code: 'https://github.com/saarib2405/Dallas-Permit-Predictor-Research'
 abstract: >-
   Research code, cleaned corpus and result files for a leakage-free
   two-stage hurdle model of declared building-permit value, built on
@@ -49,4 +49,8 @@ keywords:
   - urban analytics
   - gradient boosting
   - reproducibility
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.23350763
+    description: Archived release of this repository
 license: MIT
