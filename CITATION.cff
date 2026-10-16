@@ -1,6 +1,6 @@
 cff-version: 1.2.0
 title: >-
-  Dallas Building Permit Value Research: a leakage-free two-stage
+  Dallas Building Permit Value Research: a chronological two-stage
   hurdle pipeline for municipal permit records
 message: >-
   If you use this software or data, please cite both this software
@@ -25,7 +25,7 @@ identifiers:
     value: 10.5281/zenodo.23350763
     description: Archived release of this repository
 abstract: >-
-  Research code, cleaned corpus and result files for a leakage-free
+  Research code, cleaned corpus and result files for a chronological
   two-stage hurdle model of declared building-permit value, built on
   126,837 City of Dallas permit records issued between January 2018 and
   August 2020. The pipeline enforces chronological feature construction

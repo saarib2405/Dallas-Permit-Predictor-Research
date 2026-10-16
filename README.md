@@ -1,6 +1,6 @@
 # Dallas Building Permit Value Research
 
-Research code, cleaned corpus and result files for a leakage-free two-stage hurdle
+Research code, cleaned corpus and result files for a chronologically audited two-stage hurdle
 model of **declared building-permit value**, built on City of Dallas permit records
 issued between January 2018 and August 2020.
 
@@ -41,7 +41,7 @@ Dallas-Permit-Predictor-Research/
 │   ├── feature_audit.md                  # Audit identifying the baseline flaws
 │   └── fold2_and_parser_findings.md      # Root-cause diagnostic findings
 └── tests/
-    └── test_manuscript_verification.py   # Verifies manuscript figures against results
+    └── test_results_verification.py      # Verifies consistency of results against outputs
 ```
 
 ## Data
